@@ -1,0 +1,327 @@
+test_001:
+  - local_pref: "DEFAULT"
+  - remote_pref: "PRIMARY"
+  - testscenarios:
+      [['ovs-1-vlan16', 'ovs-8-vlan19'],
+       ['ovs-1-vlan16', 'ovs-9-vlan16'],
+       ['ovs-6-vlan19', 'ovs-8-vlan19'],
+       ['ovs-6-vlan19', 'ovs-9-vlan16'],
+       ['ovs-7-vlan18', 'ovs-8-vlan19'],
+       ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_002:
+  - local_pref: "DEFAULT"
+  - remote_pref: "SECONDARY"
+  - testscenarios:
+      [['ovs-1-vlan16', 'ovs-8-vlan19'],
+       ['ovs-1-vlan16', 'ovs-9-vlan16'],
+       ['ovs-6-vlan19', 'ovs-8-vlan19'],
+       ['ovs-6-vlan19', 'ovs-9-vlan16'],
+       ['ovs-7-vlan18', 'ovs-8-vlan19'],
+       ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_003:
+  - local_pref: "DEFAULT"
+  - remote_pref: "PRIMARY_SECONDARY"
+  - testscenarios:
+      [['ovs-1-vlan16', 'ovs-8-vlan19'],
+       ['ovs-1-vlan16', 'ovs-9-vlan16'],
+       ['ovs-6-vlan19', 'ovs-8-vlan19'],
+       ['ovs-6-vlan19', 'ovs-9-vlan16'],
+       ['ovs-7-vlan18', 'ovs-8-vlan19'],
+       ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_004:
+  - local_pref: "DEFAULT"
+  - remote_pref: "SECONDARY_PRIMARY"
+  - testscenarios:
+      [['ovs-1-vlan16', 'ovs-8-vlan19','down','up'],
+       ['ovs-1-vlan16', 'ovs-9-vlan16','down','up'],
+       ['ovs-6-vlan19', 'ovs-8-vlan19','down','up'],
+       ['ovs-6-vlan19', 'ovs-9-vlan16','down','up'],
+       ['ovs-7-vlan18', 'ovs-8-vlan19','down','up'],
+       ['ovs-7-vlan18', 'ovs-9-vlan16','down','up']]
+
+test_005:
+  - local_pref: "DEFAULT"
+  - remote_pref: "DEFAULT"
+  - testscenarios:
+      [['ovs-1-vlan16', 'ovs-8-vlan19'],
+       ['ovs-1-vlan16', 'ovs-9-vlan16'],
+       ['ovs-6-vlan19', 'ovs-8-vlan19'],
+       ['ovs-6-vlan19', 'ovs-9-vlan16'],
+       ['ovs-7-vlan18', 'ovs-8-vlan19'],
+       ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+
+test_006:
+  - local_pref: "PRIMARY"
+  - remote_pref: "DEFAULT"
+  - testscenarios:
+      [['ovs-1-vlan16', 'ovs-8-vlan19'],
+       ['ovs-1-vlan16', 'ovs-9-vlan16'],
+       ['ovs-6-vlan19', 'ovs-8-vlan19'],
+       ['ovs-6-vlan19', 'ovs-9-vlan16'],
+       ['ovs-7-vlan18', 'ovs-8-vlan19'],
+       ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_007:
+  - local_pref: "PRIMARY"
+  - remote_pref: "PRIMARY"
+  - testscenarios:
+      [['ovs-1-vlan16', 'ovs-8-vlan19'],
+       ['ovs-1-vlan16', 'ovs-9-vlan16'],
+       ['ovs-6-vlan19', 'ovs-8-vlan19'],
+       ['ovs-6-vlan19', 'ovs-9-vlan16'],
+       ['ovs-7-vlan18', 'ovs-8-vlan19'],
+       ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_008:
+  - local_pref: "PRIMARY"
+  - remote_pref: "SECONDARY"
+  - testscenarios:
+      [['ovs-1-vlan16', 'ovs-8-vlan19'],
+       ['ovs-1-vlan16', 'ovs-9-vlan16'],
+       ['ovs-6-vlan19', 'ovs-8-vlan19'],
+       ['ovs-6-vlan19', 'ovs-9-vlan16'],
+       ['ovs-7-vlan18', 'ovs-8-vlan19'],
+       ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_009:
+  - local_pref: "PRIMARY"
+  - remote_pref: "PRIMARY_SECONDARY"
+  - testscenarios:
+      [['ovs-1-vlan16', 'ovs-8-vlan19'],
+       ['ovs-1-vlan16', 'ovs-9-vlan16'],
+       ['ovs-6-vlan19', 'ovs-8-vlan19'],
+       ['ovs-6-vlan19', 'ovs-9-vlan16'],
+       ['ovs-7-vlan18', 'ovs-8-vlan19'],
+       ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_010:
+    - local_pref: "PRIMARY"
+    - remote_pref: "SECONDARY_PRIMARY"
+    - testscenarios:
+        [['ovs-1-vlan16', 'ovs-8-vlan19'],
+         ['ovs-1-vlan16', 'ovs-9-vlan16'],
+         ['ovs-6-vlan19', 'ovs-8-vlan19'],
+         ['ovs-6-vlan19', 'ovs-9-vlan16'],
+         ['ovs-7-vlan18', 'ovs-8-vlan19'],
+         ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_011:
+    - local_pref: "SECONDARY"
+    - remote_pref: "DEFAULT"
+    - testscenarios:
+        [['ovs-1-vlan16', 'ovs-8-vlan19'],
+         ['ovs-1-vlan16', 'ovs-9-vlan16'],
+         ['ovs-6-vlan19', 'ovs-8-vlan19'],
+         ['ovs-6-vlan19', 'ovs-9-vlan16'],
+         ['ovs-7-vlan18', 'ovs-8-vlan19'],
+         ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_012:
+    - local_pref: "SECONDARY"
+    - remote_pref: "PRIMARY"
+    - testscenarios:
+        [['ovs-1-vlan16', 'ovs-8-vlan19'],
+         ['ovs-1-vlan16', 'ovs-9-vlan16'],
+         ['ovs-6-vlan19', 'ovs-8-vlan19'],
+         ['ovs-6-vlan19', 'ovs-9-vlan16'],
+         ['ovs-7-vlan18', 'ovs-8-vlan19'],
+         ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_013:
+    - local_pref: "SECONDARY"
+    - remote_pref: "SECONDARY"
+    - testscenarios:
+        [['ovs-1-vlan16', 'ovs-8-vlan19'],
+         ['ovs-1-vlan16', 'ovs-9-vlan16'],
+         ['ovs-6-vlan19', 'ovs-8-vlan19'],
+         ['ovs-6-vlan19', 'ovs-9-vlan16'],
+         ['ovs-7-vlan18', 'ovs-8-vlan19'],
+         ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_014:
+    - local_pref: "SECONDARY"
+    - remote_pref: "PRIMARY_SECONDARY"
+    - testscenarios:
+        [['ovs-1-vlan16', 'ovs-8-vlan19'],
+         ['ovs-1-vlan16', 'ovs-9-vlan16'],
+         ['ovs-6-vlan19', 'ovs-8-vlan19'],
+         ['ovs-6-vlan19', 'ovs-9-vlan16'],
+         ['ovs-7-vlan18', 'ovs-8-vlan19'],
+         ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_015:
+    - local_pref: "SECONDARY"
+    - remote_pref: "SECONDARY_PRIMARY"
+    - testscenarios:
+        [['ovs-1-vlan16', 'ovs-8-vlan19'],
+         ['ovs-1-vlan16', 'ovs-9-vlan16'],
+         ['ovs-6-vlan19', 'ovs-8-vlan19'],
+         ['ovs-6-vlan19', 'ovs-9-vlan16'],
+         ['ovs-7-vlan18', 'ovs-8-vlan19'],
+         ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_016:
+    - local_pref: "PRIMARY_SECONDARY"
+    - remote_pref: "DEFAULT"
+    - testscenarios:
+        [['ovs-1-vlan16', 'ovs-8-vlan19'],
+         ['ovs-1-vlan16', 'ovs-9-vlan16'],
+         ['ovs-6-vlan19', 'ovs-8-vlan19'],
+         ['ovs-6-vlan19', 'ovs-9-vlan16'],
+         ['ovs-7-vlan18', 'ovs-8-vlan19'],
+         ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_017:
+    - local_pref: "PRIMARY_SECONDARY"
+    - remote_pref: "PRIMARY"
+    - testscenarios:
+        [['ovs-1-vlan16', 'ovs-8-vlan19'],
+         ['ovs-1-vlan16', 'ovs-9-vlan16'],
+         ['ovs-6-vlan19', 'ovs-8-vlan19'],
+         ['ovs-6-vlan19', 'ovs-9-vlan16'],
+         ['ovs-7-vlan18', 'ovs-8-vlan19'],
+         ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_018:
+    - local_pref: "PRIMARY_SECONDARY"
+    - remote_pref: "SECONDARY"
+    - testscenarios:
+        [['ovs-1-vlan16', 'ovs-8-vlan19'],
+         ['ovs-1-vlan16', 'ovs-9-vlan16'],
+         ['ovs-6-vlan19', 'ovs-8-vlan19'],
+         ['ovs-6-vlan19', 'ovs-9-vlan16'],
+         ['ovs-7-vlan18', 'ovs-8-vlan19'],
+         ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_019:
+    - local_pref: "PRIMARY_SECONDARY"
+    - remote_pref: "PRIMARY_SECONDARY"
+    - testscenarios:
+        [['ovs-1-vlan16', 'ovs-8-vlan19'],
+         ['ovs-1-vlan16', 'ovs-9-vlan16'],
+         ['ovs-6-vlan19', 'ovs-8-vlan19'],
+         ['ovs-6-vlan19', 'ovs-9-vlan16'],
+         ['ovs-7-vlan18', 'ovs-8-vlan19'],
+         ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_020:
+    - local_pref: "PRIMARY_SECONDARY"
+    - remote_pref: "SECONDARY_PRIMARY"
+    - testscenarios:
+        [['ovs-1-vlan16', 'ovs-8-vlan19'],
+         ['ovs-1-vlan16', 'ovs-9-vlan16'],
+         ['ovs-6-vlan19', 'ovs-8-vlan19'],
+         ['ovs-6-vlan19', 'ovs-9-vlan16'],
+         ['ovs-7-vlan18', 'ovs-8-vlan19'],
+         ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_021:
+    - local_pref: "SECONDARY_PRIMARY"
+    - remote_pref: "DEFAULT"
+    - testscenarios:
+        [['ovs-1-vlan16', 'ovs-8-vlan19'],
+         ['ovs-1-vlan16', 'ovs-9-vlan16'],
+         ['ovs-6-vlan19', 'ovs-8-vlan19'],
+         ['ovs-6-vlan19', 'ovs-9-vlan16'],
+         ['ovs-7-vlan18', 'ovs-8-vlan19'],
+         ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_022:
+    - local_pref: "SECONDARY_PRIMARY"
+    - remote_pref: "PRIMARY"
+    - testscenarios:
+        [['ovs-1-vlan16', 'ovs-8-vlan19'],
+         ['ovs-1-vlan16', 'ovs-9-vlan16'],
+         ['ovs-6-vlan19', 'ovs-8-vlan19'],
+         ['ovs-6-vlan19', 'ovs-9-vlan16'],
+         ['ovs-7-vlan18', 'ovs-8-vlan19'],
+         ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_023:
+    - local_pref: "SECONDARY_PRIMARY"
+    - remote_pref: "SECONDARY"
+    - testscenarios:
+        [['ovs-1-vlan16', 'ovs-8-vlan19'],
+         ['ovs-1-vlan16', 'ovs-9-vlan16'],
+         ['ovs-6-vlan19', 'ovs-8-vlan19'],
+         ['ovs-6-vlan19', 'ovs-9-vlan16'],
+         ['ovs-7-vlan18', 'ovs-8-vlan19'],
+         ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_024:
+    - local_pref: "SECONDARY_PRIMARY"
+    - remote_pref: "PRIMARY_SECONDARY"
+    - testscenarios:
+        [['ovs-1-vlan16', 'ovs-8-vlan19'],
+         ['ovs-1-vlan16', 'ovs-9-vlan16'],
+         ['ovs-6-vlan19', 'ovs-8-vlan19'],
+         ['ovs-6-vlan19', 'ovs-9-vlan16'],
+         ['ovs-7-vlan18', 'ovs-8-vlan19'],
+         ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+test_025:
+    - local_pref: "SECONDARY_PRIMARY"
+    - remote_pref: "SECONDARY_PRIMARY"
+    - testscenarios:
+        [['ovs-1-vlan16', 'ovs-8-vlan19'],
+         ['ovs-1-vlan16', 'ovs-9-vlan16'],
+         ['ovs-6-vlan19', 'ovs-8-vlan19'],
+         ['ovs-6-vlan19', 'ovs-9-vlan16'],
+         ['ovs-7-vlan18', 'ovs-8-vlan19'],
+         ['ovs-7-vlan18', 'ovs-9-vlan16']]
+
+
+configParams:
+  ['ovs-1-vlan16', 'ovs-6-vlan19', 'ovs-7-vlan18', 'ovs-8-vlan19', 'ovs-9-vlan16']
+                     {"1": {"dut": None, "port": None, "state": None,
+                            #"path": [["PRIMARY1", "SECONDARY2"], ["PRIMARY2", "PRIMARY1"]]},
+                      "2": {"dut": "ovs-1", "port": "port1", "state": "DOWN",
+                           #"path": [["PRIMARY2", "PRIMARY1"]]},
+                      "3": {"dut": "ovs-6", "port": "port1", "state": "DOWN",
+                            #"path": [["PRIMARY1", "DUC_PRIMARY"]]},
+                      "4": {"dut": "ovs-6", "port": "port1.1", "state": "DOWN",
+                            #"path": [["SECONDARY3", "DUC_PRIMARY"]]},
+                      "5": {"dut": "ovs-1", "port": "port1", "state": "DOWN",
+                            #"path": [["SECONDARY3", "DUC_PRIMARY"]]},
+                      "6": {"dut": "ovs-1", "port": "port2", "state": "UP",
+                            #"path": [["SECONDARY3", "SECONDARY2"]]},
+                      "7": {"dut": "ovs-7", "port": "port1.1", "state": "UP",
+                            #"path": [["SECONDARY3", "SECONDARY2"]]},
+                      "8": {"dut": "ovs-6", "port": "port1.2", "state": "DOWN",
+                            #"path": [["PRIMARY2", "DUC_PRIMARY"]]},
+                      "9": {"dut": "ovs-6", "port": "port1.2", "state": "UP",
+                            #"path": [["SECONDARY3", "SECONDARY2"]]},
+                      "10": {"dut": "ovs-7", "port": "port2", "state": "DOWN",
+                             #"path": [["SECONDARY3", "SECONDARY2"]]},
+                      "11": {"dut": "ovs-6", "port": "port1.1", "state": "UP",
+                             #"path": [["PRIMARY1", "SECONDARY2"]]},
+                      "12": {"dut": "ovs-7", "port": "port2", "state": "UP",
+                             #"path": [["PRIMARY1", "SECONDARY2"]]},
+                      "13": {"dut": "ovs-1", "port": "port1", "state": "UP",
+                             #"path": [["PRIMARY1", "SECONDARY2"], ["PRIMARY2", "PRIMARY1"]]}}],
+                    ['ovs1_to_ovs2', 'ovs-1-vlan16', 'ovs-2-vlan18',
+                     {"1": {"dut": None, "port": None, "state": None,
+                            #"path": [["PRIMARY1", "PRIMARY1"]]},
+                      "2": {"dut": "ovs-1", "port": "port1", "state": "DOWN",
+                            #"path": [["SECONDARY2", "PRIMARY3"]]},
+                      "3": {"dut": "ovs-2", "port": "port5.2", "state": "DOWN",
+                            #"path": [["SECONDARY2", "SECONDARY2"]]},
+                      "4": {"dut": "ovs-1", "port": "port2", "state": "DOWN",
+                            #"path": [["SECONDARY3", "DUC_PRIMARY"]]},
+                      "5": {"dut": "ovs-1", "port": "port1", "state": "UP",
+                            #"path": [["PRIMARY1", "PRIMARY1"]]},
+                      "6": {"dut": "ovs-2", "port": "port1", "state": "DOWN",
+                            #"path": [["PRIMARY1", "DUC_PRIMARY"]]},
+                      "7": {"dut": "ovs-2", "port": "port5.2", "state": "UP",
+                            #"path": [["PRIMARY1", "DUC_PRIMARY"]]},
+                      "8": {"dut": "ovs-1", "port": "port2", "state": "UP",
+                            #"path": [["SECONDARY2", "PRIMARY3"]]},
+                      "9": {"dut": "ovs-2", "port": "port1", "state": "UP",
+                            #"path": [["PRIMARY1", "PRIMARY1"]]}}]]
+
+
+

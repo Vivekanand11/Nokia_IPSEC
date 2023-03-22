@@ -1,0 +1,228 @@
+import logging
+import nutopos
+import unittest
+from time import time
+from nose2.tools import params
+from nuageutils import sleep, poller
+from testutils.vsdutils import get_zone, update_group_key_parameters, get_by_name
+from testutils.testutils import import_vspk, load_yaml, get_vm_by_name, get_dut_obj_from_name, get_nsg_obj_from_name
+from testutils.ubrtrafficutils import MeshGrpManager
+from testutils.events import EventMgr
+from testutils.events import GatewayEvent
+from .test_vms import VmsInfosLayer
+from .test_underlay import get_yaml_path
+from stats_forwarder.tools import MyStream
+from .test_ipsec_seed import IpsecScenarioLayer, testIpsecScenario
+from testutils.scapy_ping import ScapyStream, ScapyPingServerManager
+from pygash.config import CURRENT_SUITE, CONSTRAINTS
+from testutils.vrsutils import get_skb_mark_from_ovs_dpdkctl
+from testutils.aarutils import flap_uplinks
+from .test_aar_als import AarAlsTestCase
+from testutils.nsgutils import get_skb_mark_to_uplink_mapping
+
+ENT_NAME = 'test_organization'
+vspk = import_vspk()
+LOG = logging.getLogger(__name__)
+
+
+class TestIpsecConfig(object):
+    def __init__(self, *args):
+        self.nameSuffix = args[0]
+        self.originVport = args[1]
+        self.destVport = args[2]
+
+    def __repr__(self):
+        return "srcNsg:{}-destNsg:{}-{}".format(self.originVport, self.destVport, self.nameSuffix)
+
+
+class IpsecRemotePrefLayer(VmsInfosLayer):
+    description = 'Verify remote preference for ipsec test scenarios'
+    test_params = load_yaml(get_yaml_path(filename='test_params.yaml'))
+    acl_config = {'domain_name': 'domain-1', 'enterprise_name': 'test_organization',
+                  'priority': '100', 'action': 'FORWARD', 'app_type': 'APPLICATION',
+                  'protocol': 'ANY', 'location_type': 'ANY',
+                  'ether_type': '0x0800'}
+
+    @classmethod
+    def setUp(cls):
+        # getting enterprise
+        cls.enterprise, cls.domain, cls.zone = \
+            get_zone(cls.O.csproot, 'test_organization', 'domain-1', 'zone-1')
+        cls.event_mgr = EventMgr(enterprise=cls.enterprise.name,
+                                 bootstrap_manager=cls.bootstrappers,
+                                 vms=cls.vms, ovs_list=cls.T.nsgs)
+        cls.acldelete = False
+        cls.config = cls.test_params
+
+    def check_bg_traffic(self, check_lines=None, pass_perc=0.5):
+
+        check_packets = int(check_lines / 2) if check_lines else None
+        return self.stream.check_bg_traffic(check_packets=check_packets,
+                                            pass_perc=pass_perc * 100, log_error=False)
+
+    def create_child(self, dict1, parent, api):
+        api.from_dict(dict1)
+        (obj, conn) = parent.create_child(api)
+        return obj, conn
+
+    @classmethod
+    def configure_acl(cls, configuration):
+        if configuration["local_uplink_preference"] or configuration["remote_uplink_preference"]:
+            if configuration["local_uplink_preference"]:
+                nameset = configuration["name"]
+            else:
+                nameset = configuration["name"]
+
+            cls.adv_fwd_acl = create_advfwd_templates(cls.domain, name=nameset, priority=+1)
+        else:
+            return
+        print(cls.acl_config)
+        cls.acl_config['acl_template_name'] = cls.acl_config['description'] = nameset
+        cls.acl_config['uplink_preference'] = configuration["local_uplink_preference"]
+        cls.acl_config['remote_uplink_preference'] = configuration["remote_uplink_preference"]
+        cls.acl_config['app_type'] = None
+        cls.acl_rule = AarAlsTestCase.configure_adv_forwarding_acl_entry(cls.adv_fwd_acl,
+                                                                         kwargs=cls.acl_config)
+        sleep(5)
+        LOG.sub_result_pass('Successfully configured ACLs with local_pref {} - and remote_pref {}'.format(
+            cls.acl_config['uplink_preference'],
+            cls.acl_config[
+                'remote_uplink_preference']))
+        cls.acldelete = True
+
+    @classmethod
+    def tearDown(cls):
+        if cls.acldelete:
+            if hasattr(cls, 'acl_rule'):
+                cls.acl_rule[0].delete()
+
+            cls.adv_fwd_acl.delete()
+
+
+#
+def create_advfwd_templates(domain, priority=+1, name='default-advfwd-template'):
+    # Create Advance forwarding ACL templates
+    acl_params = {
+        'name': name,
+        'active': "true",
+        'priority': priority
+    }
+
+    ingress_tpl = vspk.NUIngressAdvFwdTemplate(**acl_params)
+    domain.create_child(ingress_tpl)
+    return ingress_tpl
+
+
+class TestIpsecRemotePrefLayer(unittest.TestCase):
+    layer = IpsecRemotePrefLayer
+
+    def setUp(self):
+        self.manager = self.layer.vms
+        self.acldelete = False
+        self.config = {}
+
+        self.domain_1 = self.layer.domain
+        self.acl_creation = False
+
+    def verify_path(self, server_ip, client_ip, result, log_prefix=None):
+        if skb_mark := get_skb_mark_from_ovs_dpdkctl(self.client_nsg, server_ip, client_ip,
+                                                     console=self.client_nsg.console):
+            skb_mark_hex = '0x' + skb_mark
+            local_uplink, remote_uplink = get_skb_mark_to_uplink_mapping(skb_mark_hex)
+            LOG.info('############### Expected path is %s #############', result)
+            if local_uplink == result[0][0] and remote_uplink == result[0][1]:
+                LOG.sub_result_pass('{}: The flow is going on the expected path LU, RU  : {}, {}'
+                                    .format(log_prefix, local_uplink, remote_uplink))
+            else:
+                if len(result) > 1:
+                    if local_uplink == result[1][0] and remote_uplink == result[1][1]:
+                        LOG.sub_result_pass('{}: The flow is going on the second expected'
+                                            ' path LU {}, RU {}'
+                                            .format(log_prefix, local_uplink, remote_uplink))
+                    else:
+                        LOG.sub_result_fail('{}: Expected Path - LU, RU: [{}, {}] or [{}, {}] ; '
+                                            'Seen Path - LU {}, RU {}'
+                                            .format(log_prefix, result[0][0], result[0][1],
+                                                    result[1][0], result[1][1], local_uplink,
+                                                    remote_uplink))
+                else:
+                    LOG.sub_result_fail('{}: Expected Path - LU {}, RU {}; '
+                                        'Seen Path - LU {}, RU {}'
+                                        .format(log_prefix, result[0][0], result[0][1],
+                                                local_uplink, remote_uplink))
+        else:
+            LOG.sub_result_fail('{}: Unable to find the SKB_mark or flow does not exist'
+                                .format(log_prefix))
+
+    @params("def_pri", "def_sec", "def_prisec", "def_secpri", "def_def", "pri_def", "pri_pri", "pri_sec", "pri_prisec",
+            "pri_secpri", "sec_def", "sec_pri", "sec_sec", "sec_prisec", "sec_secpri", "prisec_def", "prisec_pri",
+            "prisec_sec", "prisec_prisec", "prisec_secpri", "secpri_def",
+            "secpri_pri", "secpri_sec", "secpri_prisec", "secpri_secpri")
+    def test(self, tcase):
+        configuration = {}
+        print(tcase)
+        self.config = self.layer.test_params
+        configuration["local_uplink_preference"] = self.config[tcase][0]["local_pref"]
+        configuration["remote_uplink_preference"] = self.config[tcase][1]["remote_pref"]
+        configuration["name"] = tcase
+        if self.acl_creation == False:
+            self.layer.configure_acl(configuration)
+            self.acl_creation = True
+        for case in self.config[tcase][2]["configParams"][0]:
+            print(case)
+            test_config = TestIpsecConfig(*case)
+            test_config.name = tcase
+            test_config.kwargs = case[3]
+
+            for event_id in test_config.kwargs:
+                self.client_vport = self.layer.vms.get_vport_by_name(test_config.originVport, True)[0]
+                self.server_vport = self.layer.vms.get_vport_by_name(test_config.destVport, True)[0]
+                self.client_ip = str(self.client_vport.get_ip_from_vm()).split("/")[0]
+                self.server_ip = str(self.server_vport.get_ip_from_vm()).split("/")[0]
+                self.client_nsg = self.client_vport.gateway
+                self.server_nsg = self.server_vport.gateway
+                self.stream = MyStream(self.client_vport, self.server_vport, protocol='icmp', count=3600, rate=1)
+                sleep(10)
+                dut = test_config.kwargs[event_id].get("dut", None)
+                port = test_config.kwargs[event_id].get("port", None)
+                state = test_config.kwargs[event_id].get("state", "UP")
+                path = test_config.kwargs[event_id].get("path", None)
+                LOG.info('Triggering on OVS : {}, OVS : {}, Event {} : dut : {}, port : {}, state : {}'.format(
+                    test_config.originVport, test_config.destVport,event_id, dut,
+                                                                                        port, state))
+                if dut and port:
+                    flap_uplinks(get_nsg_obj_from_name(dut), [port], state, console=True)
+                    sleep(10)
+                self.stream.start_backgroud_traffic()
+                sleep(10)
+                self.verify_path(self.server_ip, self.client_ip, path,
+                                 log_prefix=f'{dut}-{port}-{state}')
+                sleep(5)
+                self.stream.check_bg_traffic(pass_perc=0.5)
+                print("checking bg traffic")
+                if self.stream:
+                    self.stream.stop_backgroud_traffic(early_termination=True)
+                    self.stream = None
+                print("Background traffic stopped")
+                LOG.info("Background traffic stopped")
+                if hasattr(self, 'client_vport'):
+                    self.client_vport.vm.cmd('pkill ping')
+                sleep(10)
+                self.acldelete=True
+                LOG.info("Completed!!!")
+        # if hasattr(self.layer, 'acl_rule'):
+        #     self.layer.acl_rule[0].delete()
+
+
+    # def tearDown(self):
+    #
+    #     if self.acldelete:
+    #         print("####### Deleting scenario")
+    #         self.layer.tearDown()
+    def tearDown(self):
+        print('tearing down')
+        if self.acldelete:
+            if hasattr(self.layer, 'acl_rule'):
+                self.layer.acl_rule[0].delete()
+
+            self.layer.adv_fwd_acl.delete()

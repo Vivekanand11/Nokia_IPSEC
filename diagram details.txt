@@ -1,0 +1,101 @@
+NSG& ubr ports, c&d uplinks, tagged untagged, VSC profile
+
+VSC profile:
+DUT G:ovs-1-port3-vlan41
+	  ovs-1-port3-vlan42
+	  ovs-1-port3-vlan51
+	  ovs-1-port3-vlan52
+	  ovs-2-port3-vlan53
+	  ovs2-port3-vlan54
+	  ovs6-port3-vlan22 (bridge)
+	  ovs6-port3-vlan28 (bridge)
+	  ovs6-port3-vlan12
+	  ovs6-port3-vlan13
+	  ovs6-port3-vlan23
+	  ovs6-port3-vlan29
+	  ovs6-port3-vlan4
+	  ovs6-port3-vlan5
+	  ovs7-port3-vlan14 (bridge)
+	  ovs7-port3-vlan24 (bridge)
+	  ovs7-port3-vlan30 (bridge)
+	  ovs7-port3-vlan6 (bridge)
+	  ovs7-port3-vlan15
+	  ovs7-port3-vlan25
+	  ovs7-port3-vlan31
+	  ovs7-port3-vlan7
+
+DUT H:   ovs3-port3-vlan45 (bridge)
+		 ovs3-port3-vlan46
+		 ovs4-port3-vlan73 (bridge)
+		 ovs4-port3-vlan83 (bridge)
+		 ovs4-port3-vlan72
+		 ovs4-port3-vlan82
+		 
+DUT I:   ovs3-port3-vlan45 (bridge)
+		 ovs3-port3-vlan46
+		 ovs4-port3-vlan73 (bridge)
+		 ovs4-port3-vlan83 (bridge)
+		 ovs4-port3-vlan72
+		 ovs4-port3-vlan82
+
+DUT J:   ovs1-port3-vlan41
+         ovs1-port3-vlan42
+		 ovs1-port3-vlan51
+		 ovs1-port3-vlan52
+		 
+NSG-1: P1U1 S2U2
+NSG-2: P1U3 S2U4
+NSG-3: S1U1 P2U2
+NSG-4: 
+NSG-6(UBR):
+NSG-7(UBR):
+NSG-8(UBR):
+NSG-9(UBR):
+
+ovs-1: net ports: port1, 2 access ports: 3,4,5,6,7,8
+ovs-2: same
+ovs-3: same
+
+There is only control uplinks for the UBR no data uplinks
+
+firstPacketDelayViolation_nonSLA_PoS_PoS_P1P2_u1u2_ipsec_UbrCtrlData_Untagged
+testutils/ipsec
+testtripleuplinks
+acls(nsg, src, localpref, remotepref)
+
+
+untagged tagged there are 2 organizations 
+NSG1: P1U1 S2U3 
+NSG-2: P1U1 S2U4
+NSG-3: P2U2 S1U1
+NSG-4: P1U1 P2U2 (org2)
+NSG-6(UBR): N/W ports 1 (Vlan 1,100,200), 2(Vlan 2,300,400)
+NSG-7(UBR):port 1(Vlan 1,500, 600), 2(Vlan 2, 700, 800)
+NSG-8(UBR):port 1 (Vlan 1) 2 (Vlan 2)
+NSG-9(UBR):port 1 (Vlan 1) 2 (Vlan 2)
+
+NSG-1: if I login from testbed as ssh root@ovs-1 -p 893, I get this IP(root@ovs-1)78-218-142-21, 10.15.1.254
+ovs-2: 10.15.3.254 (Internal Ip's)
+ovs-3: 10.15.33.254
+ovs-4: 10.15.2.254
+ovs-5: 10.254.191.219
+ovs-6: 10.15.6.254
+ovs-7: 10.15.7.254
+NSG-8: ip 38-246-101-180 (root@ovs-8), 10.15.8.254
+NSG-9: 10.15.9.254
+traffic VM: 10.254.191.216
+VSD: Connected to 10.254.191.203:2502
+hyp1: dut g,h
+hyp3: dut i, j
+why do we need gateways here
+VSD vport name is:vs6-port3-vlan 5 
+the flows are dumped from NSG8 (71-16-172-27) and grepping for ovs-6 and ovs-7
+
+2/3 - enterprise&intern
+2- core ip rout/enter/netman
+adv elective 3- sdn,
+fun 2
+
+we are using only ubr 6,7 even though we have configured 6,7,8,9.
+if we go to uplink roles, there are two roles, primary and secondary.
+application programming management(probes)
